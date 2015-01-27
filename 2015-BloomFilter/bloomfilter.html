@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bloom Filter</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style type="text/css">
+@import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+body { font-family: 'Droid Serif'; }
+h1, h2, h3 {
+font-family: 'Yanone Kaffeesatz';
+font-weight: normal;
+}
+.remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+.remark-slide-content { font-size: 20px; }
+strong { color: red; }
+</style>
+</head>
+<body>
+<textarea id="source">
+
+class: center, middle
+# Bloom Filter
+Stefan Seelmann
+
+---
+
+# Introduction
+
+> A Bloom filter is a space-efficient probabilistic data structure,  
+> conceived by Burton Howard Bloom in 1970,  
+> that is used to test whether an element is a member of a set.  
+> False positive matches are possible, but false negatives are not.
+
+.right[https://en.wikipedia.org/wiki/Bloom_filter]
+
+---
+
+# Introduction
+
+> A Bloom filter is a space-efficient probabilistic **data structure**,  
+> conceived by Burton Howard Bloom in 1970,  
+> that is **used to test whether an element is a member of a set**.  
+> False positive matches are possible, but false negatives are not.
+
+.right[https://en.wikipedia.org/wiki/Bloom_filter]
+
+???
+* no general-purpose data structure
+* membership test
+* a Bloom filter only has two function: _add_ and _test_
+* elements can't be deleted (counting bloom filters)
+* no element retrieval or traversal
+
+---
+
+# Introduction
+
+> A Bloom filter is a space-efficient **probabilistic** data structure,  
+> conceived by Burton Howard Bloom in 1970,  
+> that is used to test whether an element is a member of a set.  
+> **False positive matches are possible, but false negatives are not**.
+
+.right[https://en.wikipedia.org/wiki/Bloom_filter]
+
+???
+* You don't always get the right answer
+* Is element within the bloom filter?
+    * Propably there
+    * Definitely not
+* FPR increases with number of elements
+
+---
+
+# Introduction
+
+> A Bloom filter is a **space-efficient** probabilistic data structure,  
+> conceived by Burton Howard Bloom in 1970,  
+> that is used to test whether an element is a member of a set.  
+> False positive matches are possible, but false negatives are not.
+
+.right[https://en.wikipedia.org/wiki/Bloom_filter]
+
+???
+* Doesn't store element itself
+* User-defined fixed size
+
+---
+
+# How it works
+
+* bit array of size _m_
+* _k_ hash functions to calulate array positions
+* add(e): set the bits
+* test(e): check if bits are set
+
+---
+
+# Interactive demonstration
+
+![](demo/jasondavies.png)
+
+.right[http://www.jasondavies.com/bloomfilter/]
+
+---
+
+# Sizing
+
+Trade-off: memory usage vs. false positive rate
+
+> ![m = - ( n * ln(p) ) / ln(2)^2](img/formula_size.png)
+>   
+> _n_: estimated number of elements  
+> _p_: false positive probability  
+> _m_: required bit array length  
+   
+   
+Example:
+
+* n=1,000,000
+    * FPR 10% ~= 4800000 Bit ~= 600 kByte
+    * FPR 0.1% ~= 14400000 Bit ~= 1.8 MByte
+
+---
+
+# Hash functions
+
+Optimal number of hash functions:
+
+> ![k = (m/n) * ln(2)](img/formula_hash.png)
+>   
+> _m_: bit array length  
+> _n_: estimated number of elements  
+> _k_: optimal number of hash functions 
+
+Typical 7..15
+
+Hash function selection:
+
+* random distribution, fast calculation
+* different hash functions or same hash functions with different salts
+* MurmurHash, Fowler-Noll-Vo
+
+---
+
+# Use cases
+
+* Databases
+
+
+* Caches
+
+
+* K/V Stores
+    * HBase
+    * Cassandra
+
+
+* Networking
+
+
+* Chrome Browser
+
+---
+
+![](img/Bloom_filter_speed.svg.png)
+
+.right[https://en.wikipedia.org/wiki/Bloom_filter]
+
+---
+
+# Tricks
+
+* Folding
+    * halve in size
+    * bitwise OR 1st and 2nd half
+    * precondition: size is a power of 2
+
+
+* Merging (Union)
+    * precondition: 2 Bloom filters with same size and hash functions
+    * bitwise OR 
+
+
+* Intersection
+    * Measure 'similarity' 
+
+
+---
+
+# Variants
+
+* Counting Bloom filters
+    * Allow implementation of delete operation
+
+
+* Scalable (dynamic) Bloom filters
+    * Adapt to numbers of stored elements
+
+
+* Stable Bloom filters
+    * For (infinite) streaming applications, evict old state
+
+---
+
+## Sources
+
+* Wikipedia:  
+  https://en.wikipedia.org/wiki/Bloom_filter
+* Original Paper:  
+  http://crystal.uta.edu/~mcguigan/cse6350/papers/Bloom.pdf
+* Applications:  
+  http://www.eecs.harvard.edu/~michaelm/postscripts/im2005b.pdf
+* Interactive Demo:  
+  http://www.jasondavies.com/bloomfilter/
+* Scalable Bloom filters:  
+  http://gsd.di.uminho.pt/members/cbm/ps/dbloom.pdf
+* Stable Bloom filters:  
+  http://webdocs.cs.ualberta.ca/~drafiei/papers/DupDet06Sigmod.pdf
+
+
+</textarea>
+<script src="js/remark-latest.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+var slideshow = remark.create();
+</script>
+</body>
+</html>
