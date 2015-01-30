@@ -91,13 +91,16 @@ Stefan Seelmann
 # How it works
 
 * bit array of size _m_
+
 * _k_ hash functions to calulate array positions
-* add(e): set the bits
-* test(e): check if bits are set
+
+* `add(e)`: set the bits
+
+* `test(e)`: check if bits are set
 
 ---
 
-# Interactive demonstration
+# [Interactive demonstration](demo/jasondavies.html)
 
 ![](demo/jasondavies.png)
 
@@ -172,20 +175,22 @@ Hash function selection:
 
 # Tricks
 
-* Folding
-    * halve in size
-    * bitwise OR 1st and 2nd half
-    * precondition: size is a power of 2
-
-
-* Merging (Union)
-    * precondition: 2 Bloom filters with same size and hash functions
+* Union
+    * Merge 2 bloom filters
     * bitwise OR 
+    * precondition: 2 Bloom filters with same size and hash functions
 
 
 * Intersection
     * Measure 'similarity' 
+    * bitwise AND
+    * precondition: 2 Bloom filters with same size and hash functions
 
+
+* Folding
+    * halve in size
+    * bitwise OR 1st and 2nd half
+    * precondition: size is a power of 2
 
 ---
 
